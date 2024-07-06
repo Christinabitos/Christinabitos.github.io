@@ -1,53 +1,49 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const products = [
-    {id: 'product1', price: 6000},
-    {id: 'product2', price: 5995},
-    {id: 'product3', price: 5675},
-    {id: 'product4', price: 6500},
-    {id: 'product5', price: 7028},
-    {id: 'product6', price: 4350},
-    {id: 'product7', price: 5999},
-  ];
+  // Product prices
+  const prices = [6000, 5995, 5675, 6500, 7028, 4350, 5999];
 
-  const cart = document.getElementById('carts');
-  const totalField = document.getElementById('total');
-  const cashField = document.getElementById('cash');
-  const changeField = document.getElementById('change');
-  let total = 0;
+  // Get elements
+  const qtyElements = [];
+  for (let i = 1; i <= 7; i++) {
+    qtyElements.push(document.getElementById(`qty${i}`));
+  }
+  const carts = document.getElementById('carts');
+  const total = document.getElementById('total');
+  const cash = document.getElementById('cash');
+  const change = document.getElementById('change');
 
-  products.forEach(product => {
-    const qtyInput = document.getElementById(`qty${product.id.slice(-1)}`);
-    
-    qtyInput.addEventListener('input', () => {
-      updateCart();
-    });
-  });
-
-  cashField.addEventListener('input', () => {
-    updateChange();
-  });
-
-  function updateCart() {
-    cart.value = '';
-    total = 0;
-    
-    products.forEach(product => {
-      const qty = document.getElementById(`qty${product.id.slice(-1)}`).value;
+  // Function to update orders and total
+  function updateOrders() {
+    let orders = '';
+    let totalPrice = 0;
+    for (let i = 0; i < qtyElements.length; i++) {
+      const qty = parseInt(qtyElements[i].value) || 0;
       if (qty > 0) {
-        const itemTotal = qty * product.price;
-        cart.value += `${product.id.toUpperCase()}: ${qty} x ${product.price} = ${itemTotal}\n`;
-        total += itemTotal;
+        orders += `Product ${i + 1} - Quantity: ${qty}, Price: ${prices[i] * qty}\n`;
+        totalPrice += prices[i] * qty;
       }
-    });
-
-    totalField.value = total;
+    }
+    carts.value = orders;
+    total.value = totalPrice;
     updateChange();
   }
 
+  // Function to update change
   function updateChange() {
-    const cash = parseFloat(cashField.value) || 0;
-    const change = cash - total;
-    changeField.value = change >= 0 ? change : 0;
+    const totalPrice = parseInt(total.value) || 0;
+    const cashTendered = parseInt(cash.value) || 0;
+    if (cashTendered >= totalPrice) {
+      change.value = cashTendered - totalPrice;
+    } else {
+      change.value = '';
+    }
   }
+
+  // Add event listeners
+  qtyElements.forEach(element => {
+    element.addEventListener('input', updateOrders);
+  });
+
+  cash.addEventListener('input', updateChange);
 });
-      
+        
