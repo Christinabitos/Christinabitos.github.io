@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', (event) => {
+function updateOrder() {
     const prices = {
         price1: 6,499,
         price2: 4,499,
